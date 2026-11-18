@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knowit – How well do your friends know you?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F1EFFF;--ink:#17153B;--mute:#625F85;--card:#fff;--line:#DAD6F5;--pink:#FF4F7B;--yellow:#FFD23F;--teal:#16A596;--bad:#E5383B;--r:18px}
+*{box-sizing:border-box}
+html{scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+h1,h2,h3{line-height:1.08;margin:0 0 .5em;font-weight:800;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,7vw,4.4rem)}h2{font-size:clamp(1.7rem,4vw,2.4rem)}h3{font-size:1.2rem}
+p{margin:0 0 1em}a{color:inherit}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+header.top{position:sticky;top:0;z-index:10;background:rgba(241,239,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar{max-width:980px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.logo{font-weight:800;font-size:1.5rem;letter-spacing:-.04em;text-decoration:none;background:linear-gradient(transparent 62%,var(--yellow) 62%)}
+.sp{flex:1}
+main{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--ink);background:var(--card);padding:10px 18px;border-radius:999px;font-weight:600;cursor:pointer;text-decoration:none;transition:transform .12s}
+.btn:hover{transform:translateY(-2px)}
+.btn.pri{background:var(--pink);color:#fff;border-color:var(--pink)}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.sm{padding:6px 13px;font-size:.9rem}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:var(--r);padding:22px;box-shadow:5px 5px 0 var(--ink)}
+.stack>*+*{margin-top:18px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+label.f{display:block;font-weight:600;margin-bottom:6px}
+input[type=text],input[type=email],input[type=password],textarea{width:100%;padding:11px 14px;border:2px solid var(--line);border-radius:12px;background:#fff}
+input:focus,textarea:focus{border-color:var(--ink);outline:none}
+.muted{color:var(--mute)}.small{font-size:.9rem}
+.hero{display:grid;gap:36px;grid-template-columns:1.1fr .9fr;align-items:center;padding:30px 0}
+@media(max-width:780px){.hero{grid-template-columns:1fr}}
+.opt{display:block;width:100%;text-align:left;margin-top:10px;padding:13px 16px;border:2px solid var(--ink);background:#fff;border-radius:14px;cursor:pointer;font-weight:600}
+.opt:hover:not([disabled]){background:var(--yellow)}
+.opt.right{background:var(--teal);color:#fff;border-color:var(--teal)}
+.opt.wrong{background:var(--bad);color:#fff;border-color:var(--bad)}
+.opt[disabled]{cursor:default}
+.prog{height:10px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:18px}
+.prog>i{display:block;height:100%;background:var(--pink);transition:width .3s}
+.q{border:2px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.oprow{display:flex;gap:8px;align-items:center;margin-top:8px}
+.oprow input[type=radio]{accent-color:var(--pink);width:20px;height:20px;flex:none}
+.tag{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--yellow);font-weight:600;font-size:.82rem}
+table{width:100%;border-collapse:collapse}
+td,th{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left}
+.bigscore{font-size:clamp(3.5rem,14vw,6.5rem);font-weight:800;line-height:1;letter-spacing:-.05em}
+.bar2{height:12px;background:var(--line);border-radius:99px;overflow:hidden}.bar2>i{display:block;height:100%;background:var(--teal)}
+.err{color:var(--bad);font-weight:600;min-height:1.4em}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50}
+#toast.on{opacity:1}
+.spin{width:34px;height:34px;border:4px solid var(--line);border-top-color:var(--pink);border-radius:50%;animation:s .8s linear infinite;margin:60px auto}
+@keyframes s{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><div class="bar" id="nav"></div></header>
+<main id="app"><div class="spin"></div></main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInWithPopup,GoogleAuthProvider,signOut,updateProfile,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,collection,doc,addDoc,setDoc,getDoc,getDocs,deleteDoc,query,where,orderBy,limit,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig={
+  apiKey:"AIzaSyAS8n9vUP-zRY8kWT73hjoolP3lWAPknLs",
+  authDomain:"jarvis-223d7.firebaseapp.com",
+  projectId:"jarvis-223d7",
+  storageBucket:"jarvis-223d7.firebasestorage.app",
+  messagingSenderId:"414439940922",
+  appId:"1:414439940922:web:9d1698d0deaa59c3306603",
+  measurementId:"G-EZR73NQ3S4"
+};
+const fb=initializeApp(firebaseConfig),auth=getAuth(fb),db=getFirestore(fb);
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s),app=$("#app");
+function h(tag,p={},...kids){
+  const e=document.createElement(tag);
+  for(const[k,v]of Object.entries(p||{})){
+    if(v==null||v===false)continue;
+    if(k==="class")e.className=v;
+    else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);
+    else if(k==="value"||k==="checked"||k==="disabled")e[k]=v;
+    else e.setAttribute(k,v);
+  }
+  for(const c of kids.flat())if(c!=null&&c!==false)e.append(c.nodeType?c:document.createTextNode(c));
+  return e;
+}
+const mount=(...n)=>{app.replaceChildren(...n);window.scrollTo(0,0)};
+const loading=()=>mount(h("div",{class:"spin","aria-label":"Loading"}));
+let tt;const toast=m=>{const t=$("#toast");t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),2200)};
+const link=id=>location.origin+location.pathname+"#/q/"+id;
+const go=p=>{location.hash=p};
+async function share(id,title){
+  const url=link(id);
+  if(navigator.share){try{await navigator.share({title,text:"How well do you know me? Take my quiz!",url});return}catch{}}
+  try{await navigator.clipboard.writeText(url);toast("Link copied")}catch{prompt("Copy this link",url)}
+}
+const authMsg=c=>({"auth/invalid-credential":"Wrong email or password.","auth/email-already-in-use":"That email already has an account. Log in instead.","auth/weak-password":"Use a password with at least 6 characters.","auth/invalid-email":"Enter a valid email address.","auth/popup-closed-by-user":"Sign-in window was closed.","auth/unauthorized-domain":"This domain isn't authorized in Firebase Auth settings.","auth/operation-not-allowed":"This sign-in method isn't enabled in Firebase Console.","auth/too-many-requests":"Too many attempts. Try again in a few minutes."}[c]||"Something went wrong. Try again.");
+
+/* ---------- nav ---------- */
+let user=null,ready=false;
+function renderNav(){
+  const n=$("#nav");
+  n.replaceChildren(h("a",{class:"logo",href:"#/"},"knowit"),h("span",{class:"sp"}),
+    user?[h("a",{class:"btn sm ghost",href:"#/dash"},"My quizzes"),h("a",{class:"btn sm pri",href:"#/new"},"New quiz"),h("button",{class:"btn sm",onclick:()=>signOut(auth).then(()=>go("/"))},"Log out")]
+        :[h("a",{class:"btn sm ghost",href:"#/login"},"Log in"),h("a",{class:"btn sm pri",href:"#/signup"},"Sign up")]);
+}
+onAuthStateChanged(auth,u=>{user=u;ready=true;renderNav();route()});
+
+/* ---------- router ---------- */
+window.addEventListener("hashchange",route);
+function route(){
+  if(!ready)return;
+  const p=(location.hash||"#/").slice(1).split("/").filter(Boolean);
+  const[a,b]=p;
+  if(!a)return user?go("/dash"):home();
+  if(a==="login"||a==="signup")return user?go("/dash"):authView(a);
+  if(a==="q"&&b)return take(b);
+  if(!user)return authView("login","Log in to continue.");
+  if(a==="dash")return dash();
+  if(a==="new")return editor();
+  if(a==="edit"&&b)return editor(b);
+  if(a==="r"&&b)return results(b);
+  go("/");
+}
+
+/* ---------- home ---------- */
+function home(){
+  const demo=h("div",{class:"card"});
+  const qs=["What would I order at every restaurant?","Pizza","Sushi","Tacos"],right=3;
+  function draw(sel){
+    demo.replaceChildren(h("span",{class:"tag"},"Sample question"),h("h3",{style:"margin-top:12px"},qs[0]),
+      ...qs.slice(1).map((t,i)=>h("button",{class:"opt"+(sel!=null?(i===right-1?" right":i===sel?" wrong":""):""),disabled:sel!=null,onclick:()=>draw(i)},t)),
+      sel!=null?h("p",{class:"small muted",style:"margin:14px 0 0"},sel===right-1?"Nailed it. You know them.":"Nope — it was tacos. Every time."):h("p",{class:"small muted",style:"margin:14px 0 0"},"Tap an answer."));
+  }
+  draw();
+  mount(h("section",{class:"hero"},
+    h("div",{class:"stack"},h("h1",{},"How well do your friends really know you?"),
+      h("p",{class:"muted",style:"font-size:1.15rem"},"Write a quiz about yourself. Send the link. See who gets the highest score — no sign-up needed for your friends."),
+      h("div",{class:"row"},h("a",{class:"btn pri",href:"#/signup"},"Create your quiz"),h("a",{class:"btn",href:"#/login"},"Log in"))),demo),
+    h("div",{class:"grid"},
+      ...[["Make as many quizzes as you like","Friends, family, coworkers — one quiz for each group."],["Share with one link","Works on any phone. Friends only type their name."],["Live leaderboard","See who scored best and which questions fooled everyone."]]
+        .map(([t,d])=>h("div",{class:"card",style:"box-shadow:none"},h("h3",{},t),h("p",{class:"muted",style:"margin:0"},d)))));
+}
+
+/* ---------- auth ---------- */
+function authView(mode,note){
+  const su=mode==="signup",err=h("div",{class:"err",role:"alert"},note||"");
+  const name=h("input",{type:"text",autocomplete:"name",placeholder:"Your name"}),email=h("input",{type:"email",autocomplete:"email",placeholder:"you@example.com"}),pw=h("input",{type:"password",autocomplete:su?"new-password":"current-password",placeholder:"At least 6 characters"});
+  const submit=h("button",{class:"btn pri",type:"submit"},su?"Create account":"Log in");
+  const f=h("form",{class:"stack",onsubmit:async e=>{
+    e.preventDefault();err.textContent="";submit.disabled=true;
+    try{
+      if(su){if(!name.value.trim()){throw{code:"x",message:"Enter your name."}}
+        const c=await createUserWithEmailAndPassword(auth,email.value.trim(),pw.value);await updateProfile(c.user,{displayName:name.value.trim()});}
+      else await signInWithEmailAndPassword(auth,email.value.trim(),pw.value);
+    }catch(x){err.textContent=x.code==="x"?x.message:authMsg(x.code);submit.disabled=false}
+  }},
+    su&&h("div",{},h("label",{class:"f"},"Name"),name),h("div",{},h("label",{class:"f"},"Email"),email),h("div",{},h("label",{class:"f"},"Password"),pw),err,submit,
+    h("button",{class:"btn",type:"button",onclick:async()=>{err.textContent="";try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(x){err.textContent=authMsg(x.code)}}},"Continue with Google"),
+    !su&&h("button",{class:"btn ghost sm",type:"button",onclick:async()=>{if(!email.value.trim()){err.textContent="Enter your email first.";return}try{await sendPasswordResetEmail(auth,email.value.trim());toast("Reset email sent")}catch(x){err.textContent=authMsg(x.code)}}},"Forgot password?"),
+    h("p",{class:"muted small"},su?"Already have an account? ":"New here? ",h("a",{href:su?"#/login":"#/signup"},su?"Log in":"Sign up")));
+  mount(h("div",{class:"card",style:"max-width:440px;margin:30px auto"},h("h2",{},su?"Create your account":"Welcome back"),f));
+}
+
+/* ---------- dashboard ---------- */
+async function dash(){
+  loading();
+  try{
+    const snap=await getDocs(query(collection(db,"quizzes"),where("ownerId","==",user.uid)));
+    const quizzes=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+    const counts=await Promise.all(quizzes.map(q=>getDocs(collection(db,"quizzes",q.id,"results")).then(s=>s.size).catch(()=>0)));
+    mount(h("div",{class:"row"},h("h2",{style:"margin:0"},"My quizzes"),h("span",{class:"sp"}),h("a",{class:"btn pri",href:"#/new"},"New quiz")),
+      quizzes.length?h("div",{class:"grid",style:"margin-top:22px"},...quizzes.map((q,i)=>h("div",{class:"card stack"},
+        h("div",{},h("h3",{},q.title),h("p",{class:"muted small",style:"margin:0"},q.questions.length+" questions · "+counts[i]+" "+(counts[i]===1?"player":"players"))),
+        h("div",{class:"row"},h("button",{class:"btn sm pri",onclick:()=>share(q.id,q.title)},"Share"),h("a",{class:"btn sm",href:"#/r/"+q.id},"Results"),h("a",{class:"btn sm",href:"#/edit/"+q.id},"Edit"),
+          h("button",{class:"btn sm danger",onclick:async()=>{if(confirm("Delete \""+q.title+"\" and its results?")){await deleteDoc(doc(db,"quizzes",q.id));toast("Quiz deleted");dash()}}},"Delete")))))
+      :h("div",{class:"card",style:"margin-top:22px;text-align:center"},h("h3",{},"No quizzes yet"),h("p",{class:"muted"},"Write your first quiz and send it to a friend."),h("a",{class:"btn pri",href:"#/new"},"Create a quiz")));
+  }catch(e){fail(e)}
+}
+const fail=e=>mount(h("div",{class:"card"},h("h3",{},"Couldn't load this page"),h("p",{class:"muted"},/permission/i.test(e.message)?"Firestore rules are blocking this request. Publish the rules from the setup notes.":e.message),h("a",{class:"btn",href:"#/"},"Go home")));
+
+/* ---------- editor ---------- */
+const starters=["What's my favorite food?","What's my dream vacation spot?","What would I do with a free Saturday?","What's my biggest fear?","Which superpower would I pick?","What's my go-to karaoke song genre?"];
+const blank=()=>({text:"",options:["","","",""],correct:0});
+async function editor(id){
+  let q={title:"",description:"",questions:[blank(),blank(),blank()]};
+  if(id){loading();try{const s=await getDoc(doc(db,"quizzes",id));if(!s.exists()||s.data().ownerId!==user.uid)return fail({message:"Quiz not found."});q={...s.data()};}catch(e){return fail(e)}}
+  const err=h("div",{class:"err",role:"alert"});
+  const list=h("div",{class:"stack"});
+  const title=h("input",{type:"text",maxlength:80,value:q.title,placeholder:"e.g. How well do you know Sid?"}),desc=h("textarea",{rows:2,maxlength:200,placeholder:"Optional: a short intro for your friends"});desc.value=q.description||"";
+  title.addEventListener("input",()=>q.title=title.value);desc.addEventListener("input",()=>q.description=desc.value);
+  function draw(){
+    list.replaceChildren(...q.questions.map((qu,qi)=>{
+      const qt=h("input",{type:"text",maxlength:140,value:qu.text,placeholder:"Question "+(qi+1),"aria-label":"Question "+(qi+1)});qt.addEventListener("input",()=>qu.text=qt.value);
+      return h("div",{class:"q"},h("div",{class:"row"},h("strong",{},"Question "+(qi+1)),h("span",{class:"sp"}),
+        h("button",{class:"btn sm ghost",type:"button",disabled:qi===0,onclick:()=>{[q.questions[qi-1],q.questions[qi]]=[q.questions[qi],q.questions[qi-1]];draw()},"aria-label":"Move up"},"↑"),
+        h("button",{class:"btn sm ghost",type:"button",disabled:qi===q.questions.length-1,onclick:()=>{[q.questions[qi+1],q.questions[qi]]=[q.questions[qi],q.questions[qi+1]];draw()},"aria-label":"Move down"},"↓"),
+        h("button",{class:"btn sm danger",type:"button",disabled:q.questions.length<=1,onclick:()=>{q.questions.splice(qi,1);draw()}},"Remove")),
+        h("div",{style:"margin-top:8px"},qt),
+        h("p",{class:"small muted",style:"margin:12px 0 0"},"Select the circle next to your real answer."),
+        ...qu.options.map((o,oi)=>{const oin=h("input",{type:"text",maxlength:80,value:o,placeholder:"Option "+(oi+1),"aria-label":"Option "+(oi+1)});oin.addEventListener("input",()=>qu.options[oi]=oin.value);
+          return h("div",{class:"oprow"},h("input",{type:"radio",name:"c"+qi,checked:qu.correct===oi,"aria-label":"Correct answer",onchange:()=>qu.correct=oi}),oin,
+            qu.options.length>2&&h("button",{class:"btn sm ghost",type:"button","aria-label":"Remove option",onclick:()=>{qu.options.splice(oi,1);if(qu.correct===oi)qu.correct=0;else if(qu.correct>oi)qu.correct--;draw()}},"✕"))}),
+        qu.options.length<6&&h("button",{class:"btn sm ghost",type:"button",style:"margin-top:8px",onclick:()=>{qu.options.push("");draw()}},"+ Add option"));
+    }));
+  }
+  draw();
+  const save=h("button",{class:"btn pri",onclick:async()=>{
+    err.textContent="";
+    if(!q.title.trim())return err.textContent="Give your quiz a title.";
+    const qs=[];
+    for(const[i,x]of q.questions.entries()){
+      const opts=x.options.map((o,j)=>({o:o.trim(),j})).filter(o=>o.o);
+      if(!x.text.trim())return err.textContent="Question "+(i+1)+" needs text.";
+      if(opts.length<2)return err.textContent="Question "+(i+1)+" needs at least 2 options.";
+      const ci=opts.findIndex(o=>o.j===x.correct);
+      if(ci<0)return err.textContent="Question "+(i+1)+": your selected answer is empty. Pick a filled option.";
+      qs.push({text:x.text.trim(),options:opts.map(o=>o.o),correct:ci});
+    }
+    save.disabled=true;
+    try{
+      const data={ownerId:user.uid,ownerName:user.displayName||"Someone",title:q.title.trim(),description:(q.description||"").trim(),questions:qs,createdAt:q.createdAt||serverTimestamp()};
+      let qid=id;if(id)await setDoc(doc(db,"quizzes",id),data);else qid=(await addDoc(collection(db,"quizzes"),data)).id;
+      toast("Quiz saved");go("/r/"+qid);
+    }catch(e){err.textContent=e.message;save.disabled=false}
+  }},id?"Save changes":"Publish quiz");
+  mount(h("div",{class:"stack"},h("h2",{},id?"Edit quiz":"Create a quiz"),
+    h("div",{class:"card stack"},h("div",{},h("label",{class:"f"},"Title"),title),h("div",{},h("label",{class:"f"},"Intro"),desc)),
+    list,
+    h("div",{class:"row"},h("button",{class:"btn",type:"button",onclick:()=>{q.questions.push(blank());draw()}},"+ Add question"),
+      h("button",{class:"btn",type:"button",onclick:()=>{const used=new Set(q.questions.map(x=>x.text));const n=starters.filter(s=>!used.has(s))[0];if(!n)return toast("No more suggestions");const e=q.questions.find(x=>!x.text.trim()&&!x.options.some(o=>o.trim()));if(e)e.text=n;else q.questions.push({...blank(),text:n});draw()}},"Suggest a question")),
+    err,h("div",{class:"row"},save,h("a",{class:"btn ghost",href:"#/dash"},"Cancel"))));
+}
+
+/* ---------- take quiz (public) ---------- */
+async function take(id){
+  loading();
+  let quiz;
+  try{const s=await getDoc(doc(db,"quizzes",id));if(!s.exists())return mount(h("div",{class:"card"},h("h3",{},"Quiz not found"),h("p",{class:"muted"},"The link may be wrong, or the owner deleted it."),h("a",{class:"btn",href:"#/"},"Go home")));quiz=s.data()}catch(e){return fail(e)}
+  const qs=quiz.questions,answers=[];let name=user?.displayName||"",i=0;
+  const start=()=>{
+    const n=h("input",{type:"text",maxlength:40,value:name,placeholder:"Your name"}),err=h("div",{class:"err"});
+    mount(h("div",{class:"card stack",style:"max-width:560px;margin:20px auto"},h("span",{class:"tag"},"Quiz by "+quiz.ownerName),h("h1",{style:"font-size:2.3rem"},quiz.title),quiz.description&&h("p",{class:"muted"},quiz.description),h("p",{class:"muted small"},qs.length+" questions · about "+Math.max(1,Math.round(qs.length/3))+" min"),
+      h("div",{},h("label",{class:"f"},"What's your name?"),n),err,
+      h("button",{class:"btn pri",onclick:()=>{name=n.value.trim();if(!name)return err.textContent="Enter your name to start.";i=0;answers.length=0;step()}},"Start quiz")));
+  };
+  const step=()=>{
+    const qu=qs[i];let done=false;
+    const nextBtn=h("button",{class:"btn dark",style:"display:none;margin-top:18px",onclick:()=>{i++;i<qs.length?step():finish()}},i===qs.length-1?"See my score":"Next");
+    const opts=qu.options.map((o,oi)=>h("button",{class:"opt",onclick:()=>{if(done)return;done=true;answers.push(oi);
+      opts.forEach((b,j)=>{b.disabled=true;if(j===qu.correct)b.classList.add("right");else if(j===oi)b.classList.add("wrong")});
+      fbk.textContent=oi===qu.correct?"Correct!":"Not quite — the answer was "+qu.options[qu.correct]+".";nextBtn.style.display="inline-flex";nextBtn.focus()}},o));
+    const fbk=h("p",{class:"muted",style:"margin:14px 0 0;font-weight:600",role:"status"});
+    mount(h("div",{class:"card",style:"max-width:620px;margin:20px auto"},h("div",{class:"prog"},h("i",{style:"width:"+(i/qs.length*100)+"%"})),h("p",{class:"small muted"},"Question "+(i+1)+" of "+qs.length),h("h2",{style:"font-size:1.7rem"},qu.text),...opts,fbk,nextBtn));
+  };
+  const finish=async()=>{
+    const score=answers.reduce((s,a,k)=>s+(a===qs[k].correct?1:0),0);
+    loading();
+    try{await addDoc(collection(db,"quizzes",id,"results"),{name,score,total:qs.length,answers,createdAt:serverTimestamp()})}catch(e){toast("Couldn't save your score")}
+    let board=[];try{board=(await getDocs(query(collection(db,"quizzes",id,"results"),orderBy("score","desc"),limit(50)))).docs.map(d=>d.data())}catch{}
+    const pct=score/qs.length,msg=pct===1?"Perfect. You know "+quiz.ownerName+" better than anyone.":pct>=.7?"Great — you're a close friend.":pct>=.4?"Not bad. You know the basics.":"Time to hang out more.";
+    mount(h("div",{class:"stack",style:"max-width:620px;margin:20px auto"},
+      h("div",{class:"card",style:"text-align:center"},h("p",{class:"muted"},name+", you scored"),h("div",{class:"bigscore"},score+"/"+qs.length),h("p",{style:"font-weight:600;margin-top:12px"},msg),
+        h("div",{class:"row",style:"justify-content:center"},h("button",{class:"btn",onclick:()=>{i=0;answers.length=0;start()}},"Try again"),h("button",{class:"btn pri",onclick:()=>share(id,quiz.title)},"Challenge a friend"))),
+      board.length&&h("div",{class:"card"},h("h3",{},"Leaderboard"),h("table",{},...board.slice(0,10).map((r,k)=>h("tr",{},h("td",{},k+1),h("td",{},r.name),h("td",{style:"text-align:right;font-weight:600"},r.score+"/"+r.total))))),
+      h("div",{class:"card",style:"background:var(--yellow)"},h("h3",{},"Now make your own"),h("p",{},"See how well your friends know you."),h("a",{class:"btn dark",href:user?"#/new":"#/signup"},"Create a quiz"))));
+  };
+  start();
+}
+
+/* ---------- results (owner) ---------- */
+async function results(id){
+  loading();
+  try{
+    const s=await getDoc(doc(db,"quizzes",id));
+    if(!s.exists()||s.data().ownerId!==user.uid)return fail({message:"Quiz not found."});
+    const q=s.data(),rs=(await getDocs(collection(db,"quizzes",id,"results"))).docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.score-a.score||(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+    const avg=rs.length?(rs.reduce((a,r)=>a+r.score,0)/rs.length).toFixed(1):"–";
+    mount(h("div",{class:"stack"},
+      h("div",{class:"row"},h("h2",{style:"margin:0"},q.title),h("span",{class:"sp"}),h("a",{class:"btn sm",href:"#/edit/"+id},"Edit")),
+      h("div",{class:"card stack",style:"background:var(--yellow)"},h("strong",{},"Your share link"),h("input",{type:"text",readonly:"",value:link(id),onfocus:e=>e.target.select(),"aria-label":"Share link"}),h("div",{class:"row"},h("button",{class:"btn dark",onclick:()=>share(id,q.title)},"Share"),h("a",{class:"btn",href:"#/q/"+id},"Preview as a player"))),
+      h("div",{class:"grid"},h("div",{class:"card"},h("p",{class:"muted",style:"margin:0"},"Players"),h("div",{class:"bigscore",style:"font-size:3rem"},rs.length)),h("div",{class:"card"},h("p",{class:"muted",style:"margin:0"},"Average score"),h("div",{class:"bigscore",style:"font-size:3rem"},avg+"/"+q.questions.length))),
+      h("div",{class:"card"},h("h3",{},"Leaderboard"),rs.length?h("table",{},...rs.slice(0,50).map((r,k)=>h("tr",{},h("td",{},k+1),h("td",{},r.name),h("td",{style:"text-align:right;font-weight:600"},r.score+"/"+r.total)))):h("p",{class:"muted"},"No one has played yet. Share your link to get started.")),
+      rs.length>0&&h("div",{class:"card stack"},h("h3",{},"Which questions fooled people?"),...q.questions.map((qu,k)=>{const c=rs.filter(r=>r.answers?.[k]===qu.correct).length,p=Math.round(c/rs.length*100);return h("div",{},h("div",{class:"row"},h("span",{},qu.text),h("span",{class:"sp"}),h("strong",{},p+"%")),h("div",{class:"bar2"},h("i",{style:"width:"+p+"%"})))}))));
+  }catch(e){fail(e)}
+}
+</script>
+</body>
+</html>
